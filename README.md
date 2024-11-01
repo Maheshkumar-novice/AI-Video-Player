@@ -8,15 +8,15 @@ Without claude I don't know how much it will take to buid this simple player.
 
 ## Desktop
 
-[Desktop](desktop_demo.gif)
+![Desktop](desktop_demo.gif)
 
 ## Web
 
-[Web](web_demo.gif)
+![Web](web_demo.gif)
 
 ## Thumbnail Generation
 
-[Thumbnail Generation](thumbnails_demo.gif)
+![Thumbnail Generation](thumbnails_demo.gif)
 
 
 Video Credits: https://www.pexels.com/
