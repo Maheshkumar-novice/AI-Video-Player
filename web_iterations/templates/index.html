@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Streaming Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .video-player {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            max-height: 70vh;
+            background-color: #000;
+        }
+        .video-list {
+            margin-top: 20px;
+        }
+        .video-item {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .video-item:hover {
+            background-color: #e9ecef;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            background-color: #fee;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Video Streaming Server</h1>
+        <div class="error" id="errorMessage"></div>
+        <div class="video-player">
+            <video id="videoPlayer" controls>
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <h2>Available Videos</h2>
+        <div class="video-list" id="playlist"></div>
+    </div>
+    
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const playlist = document.getElementById('playlist');
+        const errorMessage = document.getElementById('errorMessage');
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function loadVideo(videoUrl) {
+            videoPlayer.src = videoUrl;
+            videoPlayer.play().catch(error => {
+                showError('Error playing video: ' + error.message);
+            });
+        }
+
+        function formatFileSize(bytes) {
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            if (bytes === 0) return '0 Byte';
+            const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+            return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+        }
+
+        function loadPlaylist() {
+            fetch('/api/playlist')
+                .then(response => response.json())
+                .then(data => {
+                    playlist.innerHTML = '';
+                    data.videos.forEach(video => {
+                        const div = document.createElement('div');
+                        div.className = 'video-item';
+                        div.innerHTML = `
+                            ${video.name} (${formatFileSize(video.size)})
+                        `;
+                        div.onclick = () => loadVideo(video.url);
+                        playlist.appendChild(div);
+                    });
+                    
+                    // Load first video automatically
+                    if (data.videos.length > 0) {
+                        loadVideo(data.videos[0].url);
+                    }
+                })
+                .catch(error => {
+                    showError('Error loading playlist: ' + error.message);
+                });
+        }
+
+        // Initial load
+        loadPlaylist();
+
+        // Reload playlist every 30 seconds
+        setInterval(loadPlaylist, 30000);
+    </script>
+</body>
+</html>
