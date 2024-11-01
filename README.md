@@ -6,6 +6,10 @@ It gave me a working version immediately. I went on and asked claude a few more 
 
 Without claude I don't know how much it will take to buid this simple player.
 
+## Simple Desktop
+
+![Simple Desktop](simple_desktop_demo.gif)
+
 ## Desktop
 
 ![Desktop](desktop_demo.gif)
